@@ -1,1 +1,101 @@
+---
+title: "Lab 05"
+author: "Rohit Kulkarni"
+date: "02/09/2022"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Data wrangling & EDA
+1. Some Airbnb rentals have cleaning fees, and we want to include the cleaning fee when we calculate the total rental cost. Create a variable call cleaning_fee calculated as the 2% of the price per night.
+
+```
+cleaning_fee <- airbnb$price * 0.02
+```
+
+2. Visualize the distribution of cleaning_fee and display the appropriate summary statistics. Use the graph and summary statistics to describe the distribution of cleaning_fee.
+
+```
+hist(cleaning_fee)
+summary(cleaning_fee)
+```
+Summary Statistics:
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  0.620   2.880   5.000   6.378   8.060  59.000
+  
+Histogram:
+![Cleaning Fee Distribution](cleaning_fee_distribution.png) 
+The cleaning fee distribution is skewed to the right, with a median of 5 dollars per night. There are outliers as well, for example the max which is a cleaning fee of 59 dollars per night. 
+
+3. Next, let’s examine the neighbourhood.
+
+  - How many different categories of neighbourhood are in the dataset? Show code and output to support your answer.    
+  
+  ```
+  unique(airbnb$neighbourhood)
+  ```
+  There are 5 categories in neighborhood: "Unincorporated Areas", "City of Santa Cruz", "City of Capitola", "City of Scotts Valley", "City of Watsonville"
+  
+  - Which 3 neighborhoods are most common in the data? These 3 property types make up what percent of the observations in the data? Show code and output to support your answer.
+
+  ```
+  table(airbnb$neighbourhood)
+  ```
+  Output:
+       City of Capitola    City of Santa Cruz City of Scotts Valley   City of Watsonville 
+                  218                   369                    26                    15 
+ Unincorporated Areas 
+                  861 
+                  
+  The three property types that are most common are Unincorporated Areas and City of Santa Cruz, and City of Capitola. By proportion, these categories make up 57.8% for Unincorporated Areas, 24.7% for City of Santa Cruz, and 14.6% for City of Capitola. Altogether, these three categories make up 97.2% of the data.
+
+
+4. Since an overwhelming majority of the observations in the data are one of the top 3 cities, we would like to create a simplified version of the neighbourhood variable that has 4 categories.
+
+
+
+Create a new variable called neigh_simp that has 4 categories: the three from the previous question and “Other” for all other places. Be sure to save the new variable in the data frame.
+
+```
+neigh_simp <- fct_recode(airbnb$neighbourhood, "Other" = "City of Scotts Valley", 
+                     "Other" = "City of Watsonville")
+
+airbnb$neighbourhood <- neigh_simp
+```
+
+
+5. What are the 4 most common values for the variable minimum_nights? Which value in the top 4 stands out? What is the likely intended purpose for Airbnb listings with this seemingly unusual value for minimum_nights? Show code and output to support your answer.
+
+```
+count(airbnb, minimum_nights)
+```
+This code shows the count for each number of minimum nights in the Airbnb. This is the output:
+
+   minimum_nights     n
+            <dbl> <int>
+ 1              1   420
+ 2              2   571
+ 3              3   223
+ 4              4    56
+ 5              5    32
+ 6              6    10
+ 7              7    30
+ 8              8     1
+ 9             10     3
+10             14     7
+
+The four most common values for minimum_nights are, in order: 2 nights, 1 night, 3 nights, and 30 nights. The most likely explanation is that some airbnb's are intended for a model more similar to paying for a month of rent. These airbnb's most likely accomodate customers for longer periods of time. 
+
+
+Airbnb is most commonly used for travel purposes, i.e. as an alternative to traditional hotels, so we only want to include Airbnb listings in our regression analysis that are intended for travel purposes. Filter airbnb so that it only includes observations with minimum_nights <= 3`.
+
+```
+airbnb <- filter(airbnb, minimum_nights <= 3)
+```
+
 
